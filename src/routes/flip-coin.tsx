@@ -6,12 +6,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 type CoinSide = 'heads' | 'tails' | null
 
-// export const Route = createFileRoute('/flip-coin')({
 export const Route = createFileRoute('/flip-coin')({
-  component: RouteComponent,
+  component: FlipCoinPage,
 })
 
-function RouteComponent() {
+function FlipCoinPage() {
   const [isFlipping, setIsFlipping] = useState(false)
   const [result, setResult] = useState<CoinSide>(null)
   const [selectedSide, setSelectedSide] = useState<CoinSide>(null)

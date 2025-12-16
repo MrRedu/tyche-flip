@@ -5,14 +5,12 @@ import {
   Card,
   CardContent,
   CardDescription,
-  // CardFooter,
   CardHeader,
   CardTitle,
 } from '../components/ui/card'
 import { Button } from '../components/ui/button'
 
-// export const Route = createFileRoute('/')({
-export const Route = createFileRoute()({
+export const Route = createFileRoute('/')({
   component: App,
 })
 
