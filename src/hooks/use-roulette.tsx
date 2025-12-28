@@ -1,12 +1,12 @@
 import { useRef, useState } from 'react'
 
 export function useRoulette(
-  initialOptions: string[] = ['Opción 1', 'Opción 2', 'Opción 3'],
+  initialOptions: Array<string> = ['Opción 1', 'Opción 2', 'Opción 3'],
 ) {
-  const [options, setOptions] = useState<string[]>(initialOptions)
+  const [options, setOptions] = useState<Array<string>>(initialOptions)
   const [isSpinning, setIsSpinning] = useState(false)
   const [result, setResult] = useState<string | null>(null)
-  const [lastResults, setLastResults] = useState<string[]>([])
+  const [lastResults, setLastResults] = useState<Array<string>>([])
   const [rotation, setRotation] = useState(0)
   const [newOption, setNewOption] = useState('')
 
