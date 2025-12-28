@@ -1,83 +1,44 @@
-import { useState } from 'react'
-
 import { Link, createFileRoute } from '@tanstack/react-router'
 import { ArrowLeft, Plus, Trash2 } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { useRoulette } from '@/hooks/use-roulette'
 
 export const Route = createFileRoute('/roulette')({
   component: RoulettePage,
 })
 
+const getSegmentColor = (index: number) => {
+  const colors = [
+    '#ef4444',
+    '#3b82f6',
+    '#22c55e',
+    '#eab308',
+    '#a855f7',
+    '#ec4899',
+    '#f97316',
+    '#14b8a6',
+  ]
+  return colors[index % colors.length]
+}
+
 function RoulettePage() {
-  const [isSpinning, setIsSpinning] = useState(false)
-  const [result, setResult] = useState<string | null>(null)
-  const [options, setOptions] = useState<Array<string>>([
-    'Opción 1',
-    'Opción 2',
-    'Opción 3',
-  ])
-  const [newOption, setNewOption] = useState('')
-  const [lastResults, setLastResults] = useState<Array<string>>([])
-  const [rotation, setRotation] = useState(0)
-
-  const addOption = () => {
-    if (newOption.trim() && !options.includes(newOption.trim())) {
-      setOptions((prev) => [...prev, newOption.trim()])
-      setNewOption('')
-    }
-  }
-
-  const removeOption = (optionToRemove: string) => {
-    if (options.length > 2) {
-      setOptions((prev) => prev.filter((opt) => opt !== optionToRemove))
-    }
-  }
-
-  const spinRoulette = () => {
-    if (isSpinning || options.length === 0) return
-
-    setIsSpinning(true)
-    setResult(null)
-
-    const randomIndex = Math.floor(Math.random() * options.length)
-    const degreesPerSegment = 360 / options.length
-    const targetDegree = randomIndex * degreesPerSegment + degreesPerSegment / 2
-    const spins = 5 * 360
-    const finalRotation = spins + targetDegree
-
-    setRotation(finalRotation)
-
-    setTimeout(() => {
-      const newResult = options[randomIndex]
-      setResult(newResult)
-      setIsSpinning(false)
-      setLastResults((prev) => [newResult, ...prev].slice(0, 10))
-    }, 4000)
-  }
-
-  const removeLastResult = () => {
-    if (result && options.length > 2) {
-      removeOption(result)
-      setResult(null)
-    }
-  }
-
-  const getSegmentColor = (index: number) => {
-    const colors = [
-      '#ef4444', // red
-      '#3b82f6', // blue
-      '#22c55e', // green
-      '#eab308', // yellow
-      '#a855f7', // purple
-      '#ec4899', // pink
-      '#f97316', // orange
-      '#14b8a6', // teal
-    ]
-    return colors[index % colors.length]
-  }
+  const {
+    options,
+    isSpinning,
+    result,
+    lastResults,
+    rotation,
+    newOption,
+    setNewOption,
+    setResult,
+    addOption,
+    removeOption,
+    spinRoulette,
+    removeLastResult,
+  } = useRoulette()
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gradient-to-br from-background via-background to-secondary/30">
@@ -105,42 +66,40 @@ function RoulettePage() {
 
                 {/* Roulette Wheel */}
                 <div className="relative w-80 h-80 rounded-full overflow-hidden shadow-2xl border-8 border-primary/30">
+                  {/* Roulette Wheel SVG */}
                   <svg
                     viewBox="0 0 200 200"
-                    className="w-full h-full transition-transform duration-[4000ms] ease-out"
-                    style={{
-                      transform: `rotate(${rotation}deg)`,
-                    }}
+                    className="w-full h-full transition-transform duration-[4000ms] cubic-bezier(0.15, 0, 0.15, 1)"
+                    style={{ transform: `rotate(${rotation}deg)` }}
                   >
                     {options.map((option, index) => {
                       const degreesPerSegment = 360 / options.length
-                      const startAngle =
-                        (index * degreesPerSegment - 90) * (Math.PI / 180)
-                      const endAngle =
-                        ((index + 1) * degreesPerSegment - 90) * (Math.PI / 180)
 
-                      const x1 = 100 + 100 * Math.cos(startAngle)
-                      const y1 = 100 + 100 * Math.sin(startAngle)
-                      const x2 = 100 + 100 * Math.cos(endAngle)
-                      const y2 = 100 + 100 * Math.sin(endAngle)
+                      // IMPORTANTE: El ángulo de dibujo debe empezar en -90° para que sea "las 12 en punto"
+                      const startAngleDeg = index * degreesPerSegment - 90
+                      const endAngleDeg = (index + 1) * degreesPerSegment - 90
 
-                      const largeArcFlag = degreesPerSegment > 180 ? 1 : 0
+                      const startAngleRad = (startAngleDeg * Math.PI) / 180
+                      const endAngleRad = (endAngleDeg * Math.PI) / 180
+
+                      const x1 = 100 + 100 * Math.cos(startAngleRad)
+                      const y1 = 100 + 100 * Math.sin(startAngleRad)
+                      const x2 = 100 + 100 * Math.cos(endAngleRad)
+                      const y2 = 100 + 100 * Math.sin(endAngleRad)
 
                       const pathData = [
                         `M 100 100`,
                         `L ${x1} ${y1}`,
-                        `A 100 100 0 ${largeArcFlag} 1 ${x2} ${y2}`,
+                        `A 100 100 0 ${degreesPerSegment > 180 ? 1 : 0} 1 ${x2} ${y2}`,
                         `Z`,
                       ].join(' ')
 
-                      const textAngle =
-                        (index * degreesPerSegment + degreesPerSegment / 2) *
-                        (Math.PI / 180)
-                      const textRadius = 65
-                      const textX =
-                        100 + textRadius * Math.cos(textAngle - Math.PI / 2)
-                      const textY =
-                        100 + textRadius * Math.sin(textAngle - Math.PI / 2)
+                      // Ángulo del texto (centro del segmento)
+                      const textAngleDeg =
+                        index * degreesPerSegment + degreesPerSegment / 2 - 90
+                      const textAngleRad = (textAngleDeg * Math.PI) / 180
+                      const textX = 100 + 60 * Math.cos(textAngleRad)
+                      const textY = 100 + 60 * Math.sin(textAngleRad)
 
                       return (
                         <g key={index}>
@@ -148,35 +107,24 @@ function RoulettePage() {
                             d={pathData}
                             fill={getSegmentColor(index)}
                             stroke="#fff"
-                            strokeWidth="2"
+                            strokeWidth="1"
                           />
                           <text
                             x={textX}
                             y={textY}
                             fill="white"
-                            fontSize="10"
+                            fontSize="8"
                             fontWeight="bold"
                             textAnchor="middle"
                             dominantBaseline="middle"
-                            transform={`rotate(${index * degreesPerSegment + degreesPerSegment / 2}, ${textX}, ${textY})`}
-                            className="pointer-events-none"
+                            // Rotamos el texto para que sea legible radialmente
+                            transform={`rotate(${textAngleDeg + 90}, ${textX}, ${textY})`}
                           >
-                            {option.length > 12
-                              ? option.slice(0, 12) + '...'
-                              : option}
+                            {option.slice(0, 10)}
                           </text>
                         </g>
                       )
                     })}
-                    {/* Center circle */}
-                    <circle
-                      cx="100"
-                      cy="100"
-                      r="15"
-                      fill="#1a1a1a"
-                      stroke="#f4d03f"
-                      strokeWidth="3"
-                    />
                   </svg>
                 </div>
               </div>
