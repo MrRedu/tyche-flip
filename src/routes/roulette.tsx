@@ -1,5 +1,5 @@
 import { Link, createFileRoute } from '@tanstack/react-router'
-import { ArrowLeft, Plus, Trash2 } from 'lucide-react'
+import { ArrowLeft, CircleDot, Plus, Trash2 } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -7,6 +7,23 @@ import { Input } from '@/components/ui/input'
 import { useRoulette } from '@/hooks/use-roulette'
 
 export const Route = createFileRoute('/roulette')({
+  head: () => ({
+    meta: [
+      {
+        title: 'Wheel of Fate | Toma decisiones con el azar de los dioses',
+      },
+      {
+        name: 'description',
+        content:
+          'Personaliza tus opciones y gira la Rueda del Destino. La ruleta de decisiones perfecta para elegir comidas, nombres o ganadores al azar.',
+      },
+      {
+        name: 'keywords',
+        content:
+          'ruleta de decisiones, wheel of fate, girar ruleta online, sorteo de opciones, seleccionador aleatorio.',
+      },
+    ],
+  }),
   component: RoulettePage,
 })
 
@@ -42,7 +59,7 @@ function RoulettePage() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gradient-to-br from-background via-background to-secondary/30">
-      <div className="max-w-4xl w-full space-y-6">
+      <div className="max-w-3xl w-full space-y-6">
         <Link to="/">
           <Button variant="ghost" size="sm" className="mb-4">
             <ArrowLeft className="w-4 h-4 mr-2" />
@@ -52,11 +69,13 @@ function RoulettePage() {
 
         <Card className="bg-card/80 backdrop-blur">
           <CardHeader>
-            <CardTitle className="text-4xl text-center text-balance">
-              <span className="text-primary">Ruleta</span> Personalizada
+            {/* <CardTitle className="text-4xl text-center text-balance"> */}
+            <CardTitle className="text-4xl font-bold tracking-tight flex items-center justify-center gap-3">
+              <CircleDot className="w-8 h-8 text-primary" />
+              <span className="text-primary">Wheel</span> of Fate
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-8">
+          <CardContent className="space-y-8 mt-4">
             <div className="flex flex-col items-center gap-6">
               <div className="relative">
                 {/* Pointer/Cursor */}
@@ -157,21 +176,33 @@ function RoulettePage() {
             </div>
 
             {/* Add Option Input */}
-            <div className="flex gap-2">
-              <Input
-                placeholder="Añadir nueva opción..."
-                value={newOption}
-                onChange={(e) => setNewOption(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && addOption()}
-                disabled={isSpinning}
-              />
-              <Button
-                onClick={addOption}
-                disabled={isSpinning || !newOption.trim()}
-              >
-                <Plus className="w-4 h-4" />
-              </Button>
+            <div className="flex flex-col gap-2">
+              <div className="flex gap-2">
+                <Input
+                  placeholder="Añadir nueva opción..."
+                  value={newOption}
+                  onChange={(e) => setNewOption(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && addOption()}
+                  disabled={isSpinning}
+                />
+                <Button
+                  onClick={addOption}
+                  disabled={isSpinning || !newOption.trim()}
+                >
+                  <Plus className="w-4 h-4" />
+                </Button>
+              </div>
             </div>
+
+            {/* Spin Button */}
+            <Button
+              size="lg"
+              onClick={spinRoulette}
+              disabled={isSpinning || options.length === 0}
+              className="w-full h-16 text-2xl"
+            >
+              {isSpinning ? 'Girando...' : 'Girar Ruleta'}
+            </Button>
 
             {/* Options List */}
             <div>
@@ -182,7 +213,7 @@ function RoulettePage() {
                 {options.map((option, index) => (
                   <div
                     key={index}
-                    className={`flex items-center justify-between gap-2 p-3 rounded-lg font-bold ${getSegmentColor(index)}`}
+                    className={`flex items-center bg-muted justify-between gap-2 p-3 rounded-lg font-bold ${getSegmentColor(index)}`}
                   >
                     <span className="truncate flex-1">{option}</span>
                     <Button
@@ -198,16 +229,6 @@ function RoulettePage() {
                 ))}
               </div>
             </div>
-
-            {/* Spin Button */}
-            <Button
-              size="lg"
-              onClick={spinRoulette}
-              disabled={isSpinning || options.length === 0}
-              className="w-full h-16 text-2xl"
-            >
-              {isSpinning ? 'Girando...' : 'Girar Ruleta'}
-            </Button>
 
             {/* Last Results */}
             {lastResults.length > 0 && (
