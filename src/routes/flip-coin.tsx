@@ -1,10 +1,27 @@
 import { Link, createFileRoute } from '@tanstack/react-router'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, Coins } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useFlipCoin } from '@/hooks/use-flip-coin'
 
 export const Route = createFileRoute('/flip-coin')({
+  head: () => ({
+    meta: [
+      {
+        title: 'Tyche’s Coin Flip | Toma decisiones con el azar de los dioses',
+      },
+      {
+        name: 'description',
+        content:
+          'Lanza la moneda virtual de la diosa Tyche. El clásico cara o cruz (heads or tails) diseñado para decisiones rápidas y justas con un toque mitológico.',
+      },
+      {
+        name: 'keywords',
+        content:
+          'lanzar moneda online, cara o cruz virtual, heads or tails, sorteo rápido, Tyche coin flip',
+      },
+    ],
+  }),
   component: FlipCoinPage,
 })
 
@@ -32,8 +49,9 @@ function FlipCoinPage() {
 
         <Card className="bg-card/80 backdrop-blur">
           <CardHeader>
-            <CardTitle className="text-4xl text-center text-balance">
-              Flip <span className="text-primary">Coin</span>
+            <CardTitle className="text-4xl font-bold tracking-tight flex items-center justify-center gap-3">
+              <Coins className="w-8 h-8 text-primary" />
+              {`Tyche’s `} <span className="text-primary">Coin Flip</span>
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-8">

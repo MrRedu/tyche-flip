@@ -10,7 +10,9 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as RouletteRouteImport } from './routes/roulette'
+import { Route as MinesweeperRouteImport } from './routes/minesweeper'
 import { Route as FlipCoinRouteImport } from './routes/flip-coin'
+import { Route as DiceRollRouteImport } from './routes/dice-roll'
 import { Route as IndexRouteImport } from './routes/index'
 
 const RouletteRoute = RouletteRouteImport.update({
@@ -18,9 +20,19 @@ const RouletteRoute = RouletteRouteImport.update({
   path: '/roulette',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MinesweeperRoute = MinesweeperRouteImport.update({
+  id: '/minesweeper',
+  path: '/minesweeper',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FlipCoinRoute = FlipCoinRouteImport.update({
   id: '/flip-coin',
   path: '/flip-coin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DiceRollRoute = DiceRollRouteImport.update({
+  id: '/dice-roll',
+  path: '/dice-roll',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -31,31 +43,45 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/dice-roll': typeof DiceRollRoute
   '/flip-coin': typeof FlipCoinRoute
+  '/minesweeper': typeof MinesweeperRoute
   '/roulette': typeof RouletteRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/dice-roll': typeof DiceRollRoute
   '/flip-coin': typeof FlipCoinRoute
+  '/minesweeper': typeof MinesweeperRoute
   '/roulette': typeof RouletteRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/dice-roll': typeof DiceRollRoute
   '/flip-coin': typeof FlipCoinRoute
+  '/minesweeper': typeof MinesweeperRoute
   '/roulette': typeof RouletteRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/flip-coin' | '/roulette'
+  fullPaths: '/' | '/dice-roll' | '/flip-coin' | '/minesweeper' | '/roulette'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/flip-coin' | '/roulette'
-  id: '__root__' | '/' | '/flip-coin' | '/roulette'
+  to: '/' | '/dice-roll' | '/flip-coin' | '/minesweeper' | '/roulette'
+  id:
+    | '__root__'
+    | '/'
+    | '/dice-roll'
+    | '/flip-coin'
+    | '/minesweeper'
+    | '/roulette'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  DiceRollRoute: typeof DiceRollRoute
   FlipCoinRoute: typeof FlipCoinRoute
+  MinesweeperRoute: typeof MinesweeperRoute
   RouletteRoute: typeof RouletteRoute
 }
 
@@ -68,11 +94,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RouletteRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/minesweeper': {
+      id: '/minesweeper'
+      path: '/minesweeper'
+      fullPath: '/minesweeper'
+      preLoaderRoute: typeof MinesweeperRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/flip-coin': {
       id: '/flip-coin'
       path: '/flip-coin'
       fullPath: '/flip-coin'
       preLoaderRoute: typeof FlipCoinRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dice-roll': {
+      id: '/dice-roll'
+      path: '/dice-roll'
+      fullPath: '/dice-roll'
+      preLoaderRoute: typeof DiceRollRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -87,7 +127,9 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  DiceRollRoute: DiceRollRoute,
   FlipCoinRoute: FlipCoinRoute,
+  MinesweeperRoute: MinesweeperRoute,
   RouletteRoute: RouletteRoute,
 }
 export const routeTree = rootRouteImport
